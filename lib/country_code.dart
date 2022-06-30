@@ -1,12 +1,7 @@
 import 'package:collection/collection.dart' show IterableExtension;
-import 'package:country_code_picker/country_codes.dart';
-import 'package:country_code_picker/country_localizations.dart';
+import 'country_codes.dart';
+import 'country_localizations.dart';
 import 'package:flutter/cupertino.dart';
-
-mixin ToAlias {}
-
-@deprecated
-class CElement = CountryCode with ToAlias;
 
 /// Country element. This is the element that contains all the information
 class CountryCode {
@@ -49,9 +44,7 @@ class CountryCode {
   }
 
   CountryCode localize(BuildContext context) {
-    return this
-      ..name =
-          CountryLocalizations.of(context)?.translate(this.code) ?? this.name;
+    return this..name = CountryLocalizations.of(context)?.translate(code) ?? name;
   }
 
   factory CountryCode.fromJson(Map<String, dynamic> json) {

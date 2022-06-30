@@ -1,5 +1,7 @@
-import 'package:country_code_picker/country_code.dart';
-import 'package:country_code_picker/country_localizations.dart';
+import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
+
+import 'country_code.dart';
+import 'country_localizations.dart';
 import 'package:flutter/material.dart';
 
 /// selection dialog used for selection of the country code
@@ -17,6 +19,7 @@ class SelectionDialog extends StatefulWidget {
   final Size? size;
   final bool hideSearch;
   final Icon? closeIcon;
+  final Function(CountryCode?)? onChange;
 
   /// Background color of SelectionDialog
   final Color? backgroundColor;
@@ -45,9 +48,8 @@ class SelectionDialog extends StatefulWidget {
     this.barrierColor,
     this.hideSearch = false,
     this.closeIcon,
-  })  : this.searchDecoration = searchDecoration.prefixIcon == null
-            ? searchDecoration.copyWith(prefixIcon: Icon(Icons.search))
-            : searchDecoration,
+    this.onChange,
+  })  : searchDecoration = searchDecoration.prefixIcon == null ? searchDecoration.copyWith(prefixIcon: const Icon(Icons.search)) : searchDecoration,
         super(key: key);
 
   @override
@@ -64,18 +66,17 @@ class _SelectionDialogState extends State<SelectionDialog> {
         child: Container(
           clipBehavior: Clip.hardEdge,
           width: widget.size?.width ?? MediaQuery.of(context).size.width,
-          height:
-              widget.size?.height ?? MediaQuery.of(context).size.height * 0.85,
+          height: widget.size?.height ?? MediaQuery.of(context).size.height * 0.85,
           decoration: widget.boxDecoration ??
               BoxDecoration(
                 color: widget.backgroundColor ?? Colors.white,
-                borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                borderRadius: const BorderRadius.all(Radius.circular(8.0)),
                 boxShadow: [
                   BoxShadow(
                     color: widget.barrierColor ?? Colors.grey.withOpacity(1),
                     spreadRadius: 5,
                     blurRadius: 7,
-                    offset: Offset(0, 3), // changes position of shadow
+                    offset: const Offset(0, 3), // changes position of shadow
                   ),
                 ],
               ),
@@ -87,7 +88,7 @@ class _SelectionDialogState extends State<SelectionDialog> {
                 padding: const EdgeInsets.all(0),
                 iconSize: 20,
                 icon: widget.closeIcon!,
-                onPressed: () => Navigator.pop(context),
+                onPressed: () => SmartDialog.dismiss(tag: "SmartCountryCodePicker"),
               ),
               if (!widget.hideSearch)
                 Padding(
@@ -137,7 +138,7 @@ class _SelectionDialogState extends State<SelectionDialog> {
       );
 
   Widget _buildOption(CountryCode e) {
-    return Container(
+    return SizedBox(
       width: 400,
       child: Flex(
         direction: Axis.horizontal,
@@ -147,8 +148,7 @@ class _SelectionDialogState extends State<SelectionDialog> {
               child: Container(
                 margin: const EdgeInsets.only(right: 16.0),
                 decoration: widget.flagDecoration,
-                clipBehavior:
-                    widget.flagDecoration == null ? Clip.none : Clip.hardEdge,
+                clipBehavior: widget.flagDecoration == null ? Clip.none : Clip.hardEdge,
                 child: Image.asset(
                   e.flagUri!,
                   package: 'country_code_picker',
@@ -159,9 +159,7 @@ class _SelectionDialogState extends State<SelectionDialog> {
           Expanded(
             flex: 4,
             child: Text(
-              widget.showCountryOnly!
-                  ? e.toCountryStringOnly()
-                  : e.toLongString(),
+              widget.showCountryOnly! ? e.toCountryStringOnly() : e.toLongString(),
               overflow: TextOverflow.fade,
               style: widget.textStyle,
             ),
@@ -177,8 +175,7 @@ class _SelectionDialogState extends State<SelectionDialog> {
     }
 
     return Center(
-      child: Text(CountryLocalizations.of(context)?.translate('no_country') ??
-          'No country found'),
+      child: Text(CountryLocalizations.of(context)?.translate('no_country') ?? 'No country found'),
     );
   }
 
@@ -191,16 +188,15 @@ class _SelectionDialogState extends State<SelectionDialog> {
   void _filterElements(String s) {
     s = s.toUpperCase();
     setState(() {
-      filteredElements = widget.elements
-          .where((e) =>
-              e.code!.contains(s) ||
-              e.dialCode!.contains(s) ||
-              e.name!.toUpperCase().contains(s))
-          .toList();
+      filteredElements = widget.elements.where((e) => e.code!.contains(s) || e.dialCode!.contains(s) || e.name!.toUpperCase().contains(s)).toList();
     });
   }
 
   void _selectItem(CountryCode e) {
-    Navigator.pop(context, e);
+    if (widget.onChange != null) {
+      widget.onChange!(e);
+    }
+
+    SmartDialog.dismiss(tag: "SmartCountryCodePicker");
   }
 }
