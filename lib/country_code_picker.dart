@@ -275,12 +275,6 @@ class SmartCountryCodePickerState extends State<SmartCountryCodePicker> {
             constraints: const BoxConstraints(maxHeight: 500, maxWidth: 400),
             child: Dialog(
               child: SelectionDialog(
-                onChange: (CountryCode? p0) {
-                  if (p0 != null) {
-                    _publishSelection(p0);
-                    selectedItem = p0;
-                  }
-                },
                 elements,
                 favoriteElements,
                 showCountryOnly: widget.showCountryOnly,
@@ -297,6 +291,12 @@ class SmartCountryCodePickerState extends State<SmartCountryCodePicker> {
                 hideSearch: widget.hideSearch,
                 closeIcon: widget.closeIcon,
                 flagDecoration: widget.flagDecoration,
+                onChange: (CountryCode? p0) {
+                  if (p0 != null) {
+                    _publishSelection(p0);
+                    selectedItem = p0;
+                  }
+                },
               ),
             ),
           ),
@@ -307,12 +307,6 @@ class SmartCountryCodePickerState extends State<SmartCountryCodePicker> {
         tag: "SmartCountryCodePicker",
         builder: (context) => Center(
           child: SelectionDialog(
-            onChange: (CountryCode? p0) {
-              if (p0 != null) {
-                _publishSelection(p0);
-                selectedItem = p0;
-              }
-            },
             elements,
             favoriteElements,
             showCountryOnly: widget.showCountryOnly,
@@ -329,6 +323,12 @@ class SmartCountryCodePickerState extends State<SmartCountryCodePicker> {
             barrierColor: widget.barrierColor,
             hideSearch: widget.hideSearch,
             closeIcon: widget.closeIcon,
+            onChange: (CountryCode? p0) {
+              if (p0 != null) {
+                _publishSelection(p0);
+                selectedItem = p0;
+              }
+            },
           ),
         ),
       ).then((value) => setState(() {}));
